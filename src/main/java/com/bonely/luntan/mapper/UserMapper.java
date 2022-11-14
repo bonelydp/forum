@@ -20,6 +20,7 @@ public interface UserMapper extends BaseMapper<User> {
     //mybstis-plus提供的更新方法是根据id一次性更新整体
     //后面根据情况选择
 
+
     @Select("update user set status = #{status} where id = #{id}")
     void updateStatus(int id, int status);
 

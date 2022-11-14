@@ -12,6 +12,19 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
+  mail:
+    host: smtp.163.com
+    username: bonelysjj@163.com
+    password: SQYJNMSINYEIIFKS
+    port: 25
+    properties:
+      mail:
+        smtl:
+          auth: true
+        smtp:
+          starttls:
+            enable: true
+            required: true
 
 #mybatisplus相关配置
 mybatis-plus:
@@ -24,5 +37,7 @@ mybatis-plus:
       id-type: ASSIGN_ID
 
 
-
-
+#自定义
+community:
+  path:
+    domain: http://localhost:81

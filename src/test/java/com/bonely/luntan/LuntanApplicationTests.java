@@ -20,8 +20,7 @@ class LuntanApplicationTests {
     @Autowired
     private DiscussPostService discussPostService;
 
-    @Autowired
-    private User user;
+
     @Test
     void contextLoads() {
     }
