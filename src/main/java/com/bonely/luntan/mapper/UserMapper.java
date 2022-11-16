@@ -21,13 +21,13 @@ public interface UserMapper extends BaseMapper<User> {
     //后面根据情况选择
 
 
-    @Select("update user set status = #{status} where id = #{id}")
+    @Select("update user set status = ${status} where id = ${id}")
     void updateStatus(int id, int status);
 
-    @Select("update user set headerUrl = #{headerUrl} where id = #{id}")
+    @Select("update user set headerUrl = ${headerUrl} where id = ${id}")
     void updateHeader(int id, String headerUrl);
 
-    @Select("update user set password = #{password} where id = #{password}")
+    @Select("update user set password = ${password} where id = ${password}")
     void updatePassword(int id, String password);
 
 }

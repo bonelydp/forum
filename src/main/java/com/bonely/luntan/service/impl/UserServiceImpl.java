@@ -2,7 +2,9 @@ package com.bonely.luntan.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.bonely.luntan.entity.LoginTicket;
 import com.bonely.luntan.entity.User;
+import com.bonely.luntan.mapper.LoginTicketMapper;
 import com.bonely.luntan.mapper.UserMapper;
 import com.bonely.luntan.service.UserService;
 import com.bonely.luntan.util.CommunityConstant;
@@ -31,6 +33,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private TemplateEngine templateEngine;
 
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
+
     @Value("${community.path.domain:}")
     private String domain;
 
@@ -39,30 +44,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userMapper.selectById(id);
     }
 
-    @Override
-    public User selectByName(String username) {
-        return userMapper.selectByName(username);
-    }
-
-    @Override
-    public User selectByEmail(String email) {
-        return userMapper.selectByEmail(email);
-    }
-
-    @Override
-    public void updateStatus(int id, int status) {
-        userMapper.updateStatus(id, status);
-    }
-
-    @Override
-    public void updateHeader(int id, String headerUrl) {
-        userMapper.updateHeader(id, headerUrl);
-    }
-
-    @Override
-    public void updatePassword(int id, String password) {
-        userMapper.updatePassword(id, password);
-    }
 
     @Override
     public Map<String, Object> register(User user) {
@@ -108,7 +89,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setHeaderUrl(String.format("http://images.nowcoder.com/head/%dt.png", new Random().nextInt(1000)));
         user.setCreateTime(new Date());
         userMapper.insert(user);
-        user = userMapper.selectByName(user.getUsername());
 
         // 激活邮件
         Context context = new Context();
@@ -141,6 +121,49 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return ACTIVATION_SUCCESS;
         }
         else return ACTIVATION_FAILURE;
+    }
+
+    @Override
+    public Map<String, Object> login(String username, String password, long expired){
+        Map<String, Object> map = new HashMap<>();
+        //先判断空值，再判断是否合法（账号是否存在，激活，密码正确否，正确的话创建新的登录凭证)
+        if(username == null){
+            map.put("usernameMsg","账号不能为空！");
+            return map;
+        }
+        if(password == null ){
+            map.put("passwordMsg", "密码不能为空");
+            return map;
+        }
+
+        User user = userMapper.selectByName(username);
+        if(user == null){
+            map.put("usernameMsg","账号不存在！");
+            return map;
+        }
+        if(user.getStatus() == 0){
+            map.put("usernameMsg", "账号未激活！");
+            return map;
+        }
+        password = CommunityUtil.md5(password + user.getSalt());
+        if(!user.getPassword().equals(password)){
+            map.put("passwordMsg", "密码不正确！");
+            return map;
+        }
+
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setStatus(0);
+        loginTicket.setTicket(CommunityUtil.generateUUID());
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expired * 1000));
+        loginTicketMapper.insert(loginTicket);
+        map.put("ticket", loginTicket.getTicket());
+        return map;
+    }
+
+    @Override
+    public void logout(String ticket){
+        loginTicketMapper.updateStatus(ticket, 1);
     }
 
 }
