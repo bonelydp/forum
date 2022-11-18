@@ -11,6 +11,6 @@ public interface LoginTicketMapper extends BaseMapper<LoginTicket> {
     @Select("select * from login_ticket where ticket = '${ticket}'")
     LoginTicket selectByTicket(String ticket);
 
-    @Select("update login_ticket set status = ${status} where ticket = ${ticket}")
-    int updateStatus(String ticket, int status);
+    @Select("update login_ticket set status = ${status} where ticket = '${ticket}'")
+    void updateStatus(String ticket, int status);
 }

@@ -166,4 +166,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         loginTicketMapper.updateStatus(ticket, 1);
     }
 
+    @Override
+    public LoginTicket findLoginTicket(String ticket) {
+        return loginTicketMapper.selectByTicket(ticket);
+    }
+
+    @Override
+    public void updateHeader(int userId, String headerUrl) {
+        userMapper.updateHeader(userId, headerUrl);
+    }
 }

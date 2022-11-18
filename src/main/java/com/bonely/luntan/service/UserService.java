@@ -1,6 +1,7 @@
 package com.bonely.luntan.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.bonely.luntan.entity.LoginTicket;
 import com.bonely.luntan.entity.User;
 
 import java.util.Map;
@@ -16,4 +17,7 @@ public interface UserService extends IService<User> {
 
     public void logout(String ticket);
 
+    public LoginTicket findLoginTicket(String ticket);
+
+    public void updateHeader(int userId, String headerUrl);
 }
