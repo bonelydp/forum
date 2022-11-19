@@ -1,18 +1,37 @@
-//package com.bonely.luntan.config;
-//
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-//import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-//
-//@Configuration
-//@Slf4j
-//public class WebMvcConfig extends WebMvcConfigurationSupport {
-//
-//    public void addResourceHandlers(ResourceHandlerRegistry registry){
-//        log.info("静态资源。。。。。。。");
-//        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
-//        registry.addResourceHandler("/templates/**").addResourceLocations("classpath:/templates/");
-//    }
-//
-//}
+package com.bonely.luntan.config;
+
+
+import com.bonely.luntan.contorller.interceptor.AlphaInterceptor;
+import com.bonely.luntan.contorller.interceptor.LoginRequiredInterceptor;
+import com.bonely.luntan.contorller.interceptor.LoginTicketInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class WebMvcConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private AlphaInterceptor alphaInterceptor;
+
+    @Autowired
+    private LoginTicketInterceptor loginTicketInterceptor;
+
+    @Autowired
+    private LoginRequiredInterceptor loginRequiredInterceptor;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(alphaInterceptor)
+                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg")
+                .addPathPatterns("/register", "/login");
+
+        registry.addInterceptor(loginTicketInterceptor)
+                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+
+        registry.addInterceptor(loginRequiredInterceptor)
+                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+    }
+
+}

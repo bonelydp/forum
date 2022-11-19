@@ -41,3 +41,4 @@ mybatis-plus:
 community:
   path:
     domain: http://localhost:81
+    upload: F:/JAVA/data/upload
